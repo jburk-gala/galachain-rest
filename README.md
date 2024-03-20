@@ -1,0 +1,1 @@
+This is an e2e example of rest on galachain that will be cleaned up later
