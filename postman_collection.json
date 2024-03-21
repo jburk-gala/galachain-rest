@@ -1,0 +1,63 @@
+{
+	"info": {
+		"_postman_id": "b027e57d-5067-4491-bfa6-485fae9f4c34",
+		"name": "Hackathon-2024",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "16623525"
+	},
+	"item": [
+		{
+			"name": "Create Eth",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/create-eth",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"create-eth"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "RegisterEth",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/register-eth/eth|7cd8ed5b867f7e020edc0b141f27cfc12e7bc16f3209a695d1a50ffabbc604a8e1256a2afbbe5150b28fdbee474db375f2365424eea7910e752c0a0d6759b8f8",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"register-eth",
+						"eth|7cd8ed5b867f7e020edc0b141f27cfc12e7bc16f3209a695d1a50ffabbc604a8e1256a2afbbe5150b28fdbee474db375f2365424eea7910e752c0a0d6759b8f8"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "RegisterEth Copy",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/register-eth/eth|7cd8ed5b867f7e020edc0b141f27cfc12e7bc16f3209a695d1a50ffabbc604a8e1256a2afbbe5150b28fdbee474db375f2365424eea7910e752c0a0d6759b8f8",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"register-eth",
+						"eth|7cd8ed5b867f7e020edc0b141f27cfc12e7bc16f3209a695d1a50ffabbc604a8e1256a2afbbe5150b28fdbee474db375f2365424eea7910e752c0a0d6759b8f8"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

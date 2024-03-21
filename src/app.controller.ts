@@ -27,6 +27,8 @@ export class AppController {
     return this.appService.generateEthereumWallet();
   }
 
+  
+  
   @Post('register-eth/:public')
   async registerUser(@Param('public') publicKey: string) {
     return this.appService.registerUser(this.getAdminUser(), publicKey);
