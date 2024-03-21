@@ -1,8 +1,15 @@
 import {
+  AllowanceType,
   CreateTokenClassDto,
   createValidDTO,
+  FetchBalancesDto,
   FetchTokenClassesDto,
+  GrantAllowanceDto,
+  MintTokenDto,
+  TokenAllowance,
   TokenClassKey,
+  TokenInstance,
+  TokenInstanceKey,
 } from '@gala-chain/api';
 import { ChainClient, gcclient } from '@gala-chain/client';
 import { Inject, Injectable } from '@nestjs/common';
@@ -18,7 +25,6 @@ import { resolve } from 'path';
 export class TokenService {
   client: ChainClient;
   constructor(
-    // private configService: ConfigService,
     @Inject(S3Service) private s3service: S3Service,
     @Inject(CredentialsService) private credService: CredentialsService,
   ) {
@@ -38,6 +44,63 @@ export class TokenService {
     };
 
     this.client = gcclient.forConnectionProfile(params).forContract(contract);
+  }
+
+  async getBalance(identityKey: string){
+    const dto = await createValidDTO<FetchBalancesDto>(FetchBalancesDto, {
+      owner: identityKey,
+    });
+
+    //TODO sign this without admin later
+    const data = await this.client.evaluateTransaction(
+      'FetchBalances',
+      dto.signed(this.credService.getAdminUser()),
+    );
+    return data;
+  }
+
+  async giveToken(tokenData: TOKEN_DATA, quantity: number, user: string) {
+    const nftClassKey: TokenClassKey = toTokenClassKey(tokenData);
+    const dto = await createValidDTO<MintTokenDto>(MintTokenDto, {
+      owner: user,
+      tokenClass: nftClassKey,
+      quantity: new BigNumber(quantity),
+    });
+
+    const data = await this.client.submitTransaction(
+      'MintToken',
+      dto.signed(this.credService.getAdminUser()),
+    );
+    return data;
+  }
+
+  async setAllowance(tokenData: TOKEN_DATA) {
+    const nftClassKey: TokenClassKey = toTokenClassKey(tokenData);
+    const galaAllowanceDto = await createValidDTO<GrantAllowanceDto>(
+      GrantAllowanceDto,
+      {
+        tokenInstance: TokenInstanceKey.nftKey(
+          nftClassKey,
+          TokenInstance.FUNGIBLE_TOKEN_INSTANCE,
+        ).toQueryKey(),
+        allowanceType: AllowanceType.Mint,
+        quantities: [
+          {
+            user: 'client|admin',
+            quantity: new BigNumber(Number.MAX_SAFE_INTEGER),
+          },
+        ],
+        uses: new BigNumber(Number.MAX_SAFE_INTEGER),
+      },
+    );
+
+    const galaResult = await this.client.submitTransaction<TokenAllowance[]>(
+      'GrantAllowance',
+      galaAllowanceDto.signed(this.credService.getAdminUser()),
+      TokenAllowance,
+    );
+
+    return galaResult;
   }
 
   async createToken(tokenData: TOKEN_DATA) {
@@ -66,10 +129,10 @@ export class TokenService {
         decimals: 0,
         tokenClass: toTokenClassKey(tokenData),
         name: tokenData.name,
-        symbol: tokenData.name.slice(0, 20).replace(' ', ''),
+        symbol: tokenData.name.slice(0, 20).replace(/\s/g, ''),
         description: tokenData.description,
         isNonFungible: true,
-        image:  s3Key,
+        image: s3Key,
         maxSupply:
           tokenData.maxSupply != null
             ? BigNumber(tokenData.maxSupply)
@@ -85,7 +148,6 @@ export class TokenService {
 
     return response;
   }
-  
 
   async getTokenClasses(token_classes: TokenClassKey[]) {
     const findClassesDto: FetchTokenClassesDto =

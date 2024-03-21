@@ -27,8 +27,20 @@ export class AppController {
     return this.appService.generateEthereumWallet();
   }
 
-  
-  
+  @Post('register/new-random')
+  async registerNewRandom() {
+    const randomWallet = ethers.Wallet.createRandom();
+    const registration = await this.appService.registerUser(
+      this.getAdminUser(),
+      randomWallet.publicKey,
+    );
+    return {
+      registration,
+      publicKey: randomWallet.publicKey,
+      privateKey: randomWallet.privateKey,
+    };
+  }
+
   @Post('register-eth/:public')
   async registerUser(@Param('public') publicKey: string) {
     return this.appService.registerUser(this.getAdminUser(), publicKey);

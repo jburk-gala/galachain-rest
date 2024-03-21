@@ -1,6 +1,6 @@
 import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
 import { S3Service } from './S3Service';
-import { FISH_DATA, TOKEN_DATA } from './nfts';
+import { NFT_DATA, TOKEN_DATA } from './nfts';
 import { TokenClassKey } from '@gala-chain/api';
 import { plainToInstance } from 'class-transformer';
 import { resolve } from 'path';
@@ -22,7 +22,7 @@ export class Startup implements OnModuleInit {
   async onModuleInit() {
     console.log('Running startup script...');
 
-    const token_classes = FISH_DATA.map((fish) => {
+    const token_classes = NFT_DATA.map((fish) => {
       const nftClassKey: TokenClassKey = toTokenClassKey(fish);
       return nftClassKey;
     });
@@ -34,7 +34,7 @@ export class Startup implements OnModuleInit {
 
     if (!tokenData) throw `Unable to get data`;
 
-    const promises = FISH_DATA.map(async (nft) => {
+    const promises = NFT_DATA.map(async (nft) => {
       if (tokenData.Data) {
         const found = tokenData.Data.find(
           (token) =>
@@ -63,6 +63,8 @@ export class Startup implements OnModuleInit {
 
       const data = await this.tokenService.createToken(nft);
       console.log(JSON.stringify(data));
+      const grantMint = await this.tokenService.setAllowance(nft);
+      console.log(JSON.stringify(grantMint));
     });
 
     await Promise.all(promises);

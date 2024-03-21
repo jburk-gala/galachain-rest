@@ -1,18 +1,20 @@
-import {
-  CreateTokenClassDto,
-  TokenClassKey,
-  createValidDTO,
-} from '@gala-chain/api';
-import { Controller, Inject, Post } from '@nestjs/common';
-import { BigNumber } from 'bignumber.js';
-import { CredentialsService } from 'src/credentials/credentials.service';
+import { Controller, Get, Inject, Param, Post } from '@nestjs/common';
 import { TokenService } from './token.service';
+import { NFT_DATA } from 'src/nfts';
 
 @Controller('token')
 export class TokenController {
   constructor(@Inject(TokenService) private tokenService: TokenService) {}
-  @Post('mint')
-  async mintToken() {
-    // return this.tokenService.createToken('test', 'test2', 'test3');
+  @Post('give/:itemnum/:user')
+  async mintToken(
+    @Param('user') user: string,
+    @Param('itemnum') itemnum: number,
+  ) {
+    return this.tokenService.giveToken(NFT_DATA[itemnum], 1, user);
+  }
+
+  @Get(':user')
+  async getAmounts(@Param('user') user: string) {
+    return this.tokenService.getBalance(user);
   }
 }

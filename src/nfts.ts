@@ -10,13 +10,22 @@ export interface TOKEN_DATA {
   maxSupply?: number;
 }
 
-export const FISH_DATA = [
+export const NFT_DATA = [
   {
     decimals: 0,
-    collection: 'TestCollectoin',
+    collection: 'TestCollection2',
     description: 'A pretty nifty item',
     category: 'Mahoodle',
     name: 'Super Sword',
+    isNonFungible: false,
+    image: 'todo',
+  },
+  {
+    decimals: 0,
+    collection: 'TestCollection2',
+    description: 'A pretty nifty item',
+    category: 'Mahoodle',
+    name: 'Super Sword Two',
     isNonFungible: false,
     image: 'todo',
   },

@@ -42,6 +42,24 @@
 			"response": []
 		},
 		{
+			"name": "RegisterNewRandom",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/register/new-random",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"register",
+						"new-random"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "RegisterEth Copy",
 			"request": {
 				"method": "POST",
@@ -54,6 +72,62 @@
 					"path": [
 						"register-eth",
 						"eth|7cd8ed5b867f7e020edc0b141f27cfc12e7bc16f3209a695d1a50ffabbc604a8e1256a2afbbe5150b28fdbee474db375f2365424eea7910e752c0a0d6759b8f8"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Request",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/token/mint",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"token",
+						"mint"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Give Token",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/token/give/1/eth|85F36DCee044DA395F3D858E16aa86C40f8d3fDb",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"token",
+						"give",
+						"1",
+						"eth|85F36DCee044DA395F3D858E16aa86C40f8d3fDb"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Balances",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/token/eth|85F36DCee044DA395F3D858E16aa86C40f8d3fDb",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"token",
+						"eth|85F36DCee044DA395F3D858E16aa86C40f8d3fDb"
 					]
 				}
 			},
