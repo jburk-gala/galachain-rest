@@ -45,7 +45,7 @@ export class AppController {
       5,
       Variety.GOLDEN_DELICIOUS,
     );
-    console.log(test);
+    return test;
   }
 
   getAdminUser() {

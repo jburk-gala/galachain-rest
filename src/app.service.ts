@@ -13,7 +13,7 @@ import { execSync } from 'child_process';
 import { ChainClient, gcclient } from '@gala-chain/client';
 import * as path from 'path';
 import { Variety } from './types';
-import Wallet from 'ethereumjs-wallet';
+import { ethers } from 'ethers';
 
 interface CustomAPI {
   GetProfile(privateKey: string): Promise<UserProfile>;
@@ -75,14 +75,14 @@ export class AppService {
   }
 
   generateEthereumWallet() {
-    const wallet = Wallet.generate();
+    const randomWallet = ethers.Wallet.createRandom();
 
-    const privateKey = wallet.getPrivateKey();
-    const publicKey = wallet.getPublicKey();
-
-    console.log('Private Key:', privateKey.toString('hex'));
-    console.log('Public Key:', publicKey.toString('hex'));
-    return { privateKey, publicKey };
+    console.log('Private Key:', randomWallet.privateKey);
+    console.log('Public Key:', randomWallet.publicKey);
+    return {
+      privateKey: randomWallet.privateKey,
+      publicKey: randomWallet.publicKey,
+    };
   }
 
   public async plantTree(privateKey: string, index: number, variety: Variety) {
