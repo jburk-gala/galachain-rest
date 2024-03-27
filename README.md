@@ -2,6 +2,7 @@ This is an e2e example of rest on galachain that will be cleaned up later
 
 To get started 
 
+0. Make sure to run the instructions to get your test network running from the galachain-sdk: https://github.com/GalaChain/sdk/blob/main/docs/getting-started.md
 1. Add connection-profiles folder and dev-admin-key folder from the galachain-sdk
 2. Copy the .env.development.sample -> .env.development
 3. npm start 
