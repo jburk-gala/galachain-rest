@@ -15,8 +15,8 @@ export class S3Service {
 
   constructor(private configService: ConfigService) {
     if (!process.env.AWS_SECRETS_ID) {
-      const s3_access_key = this.configService.get('s3_acccess_key');
-      const s3_secret = this.configService.get('s3_secret');
+      const s3_access_key = this.configService.get('s3_access_key');
+      const s3_secret = this.configService.get('s3_access_secret');
       if (!s3_access_key || !s3_secret)
         throw `Must have S3_ACCESS_KEY and S3_ACCESS_SECRET in .env`;
       this.s3 = new S3Client({

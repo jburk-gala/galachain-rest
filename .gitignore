@@ -37,3 +37,4 @@ lerna-debug.log*
 connection-profiles
 dev-admin-key
 .env.development
+.env
