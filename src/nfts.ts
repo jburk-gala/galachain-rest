@@ -29,4 +29,13 @@ export const NFT_DATA = [
     isNonFungible: false,
     image: 'todo',
   },
+  {
+    decimals: 0,
+    collection: 'TestCollection2',
+    description: 'A pretty nifty item',
+    category: 'Mahoodle',
+    name: 'Super Sword Three',
+    isNonFungible: false,
+    image: 'todo',
+  },
 ] as TOKEN_DATA[];

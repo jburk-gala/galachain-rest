@@ -19,7 +19,12 @@ export class AppController {
     @Param('index') index: number,
     @Param('variety') variety: Variety,
   ) {
-    return this.appService.plantTree('todo', index, variety);
+    const randomWallet = ethers.Wallet.createRandom();
+    const registration = await this.appService.registerUser(
+      this.getAdminUser(),
+      randomWallet.publicKey,
+    );
+    return this.appService.plantTree(randomWallet.privateKey, index, variety);
   }
 
   @Post('create-eth')
