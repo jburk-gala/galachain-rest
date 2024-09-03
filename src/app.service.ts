@@ -10,7 +10,7 @@ import {
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import { execSync } from 'child_process';
-import { ChainClient, gcclient } from '@gala-chain/client';
+import { ChainClient, ContractConfig, gcclient } from '@gala-chain/client';
 import * as path from 'path';
 import { Variety } from './types';
 import { ethers } from 'ethers';
@@ -48,16 +48,16 @@ export class AppService {
       ),
     };
 
-    const contract = {
-      channelName: 'product-channel',
-      chaincodeName: 'basic-product',
-      contractName: 'AppleContract',
+    const contract: ContractConfig = {
+      channel: 'product-channel',
+      chaincode: 'basic-product',
+      contract: 'AppleContract',
     };
 
-    const publicKeyContract = {
-      channelName: 'product-channel',
-      chaincodeName: 'basic-product',
-      contractName: 'PublicKeyContract',
+    const publicKeyContract: ContractConfig = {
+      channel: 'product-channel',
+      chaincode: 'basic-product',
+      contract: 'PublicKeyContract',
     };
 
     this.client = gcclient

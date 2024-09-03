@@ -11,7 +11,7 @@ import {
   TokenInstance,
   TokenInstanceKey,
 } from '@gala-chain/api';
-import { ChainClient, gcclient } from '@gala-chain/client';
+import { ChainClient, ContractConfig, gcclient } from '@gala-chain/client';
 import { Inject, Injectable } from '@nestjs/common';
 import { BigNumber } from 'bignumber.js';
 import * as path from 'path';
@@ -20,6 +20,7 @@ import { plainToInstance } from 'class-transformer';
 import { TOKEN_DATA } from 'src/nfts';
 import { S3Service } from '../S3Service';
 import { resolve } from 'path';
+import { channel } from 'diagnostics_channel';
 
 @Injectable()
 export class TokenService {
@@ -37,10 +38,10 @@ export class TokenService {
       ),
     };
 
-    const contract = {
-      channelName: 'product-channel',
-      chaincodeName: 'basic-product',
-      contractName: 'GalaChainToken',
+    const contract: ContractConfig = {
+      channel: 'product-channel',
+      chaincode: 'basic-product',
+      contract: 'GalaChainToken',
     };
 
     this.client = gcclient.forConnectionProfile(params).forContract(contract);
