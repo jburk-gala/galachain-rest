@@ -1,5 +1,6 @@
 import {
   ChainCallDTO,
+  CreateTokenClassDto,
   GalaChainResponse,
   GetMyProfileDto,
   RegisterEthUserDto,
@@ -7,7 +8,7 @@ import {
   UserProfile,
   createValidDTO,
 } from '@gala-chain/api';
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, HttpException, Injectable, NotFoundException } from '@nestjs/common';
 import axios from 'axios';
 import { execSync } from 'child_process';
 import { ChainClient, ContractConfig, gcclient } from '@gala-chain/client';
@@ -35,10 +36,15 @@ export class AppleTreeDto extends ChainCallDTO {
 
 @Injectable()
 export class AppService {
-  client: ChainClient & CustomAPI;
-  registerClient: ChainClient & CustomAPI;
-
+  clients: Record<string, ChainClient> = {};
   constructor() {
+    const apiParams = {
+      orgMsp: 'CuratorOrg',
+      userId: 'admin',
+      userSecret: 'adminpw',
+      apiUrl: 'https://localhost:8561/api',
+      configPath: path.resolve('api-config.json'),
+    };
     const params = {
       orgMsp: 'CuratorOrg',
       userId: 'admin',
@@ -48,27 +54,33 @@ export class AppService {
       ),
     };
 
-    const contract: ContractConfig = {
-      channel: 'product-channel',
-      chaincode: 'basic-product',
-      contract: 'AppleContract',
-    };
+    const contractConfigs: ContractConfig[] = [
+      {
+        channel: 'product-channel',
+        chaincode: 'basic-product',
+        contract: 'AppleContract',
+      },
+      {
+        channel: 'product-channel',
+        chaincode: 'basic-product',
+        contract: 'GalaChainToken',
+      },
+      {
+        channel: 'product-channel',
+        chaincode: 'basic-product',
+        contract: 'PublicKeyContract',
+      },
+    ];
+    // this.client = gcclient
+    //   .forConnectionProfile(params)
+    //   .forContract(contract)
+    //   .extendAPI(this.customAPI);
 
-    const publicKeyContract: ContractConfig = {
-      channel: 'product-channel',
-      chaincode: 'basic-product',
-      contract: 'PublicKeyContract',
-    };
-
-    this.client = gcclient
-      .forConnectionProfile(params)
-      .forContract(contract)
-      .extendAPI(this.customAPI);
-
-    this.registerClient = gcclient
-      .forConnectionProfile(params)
-      .forContract(publicKeyContract)
-      .extendAPI(this.customAPI);
+    contractConfigs.forEach((contract) => {
+      this.clients[contract.contract.toLowerCase()] = gcclient
+        .forConnectionProfile(params)
+        .forContract(contract);
+    });
   }
   getHello(): string {
     return 'Hello World!';
@@ -85,9 +97,32 @@ export class AppService {
     };
   }
 
-  public async plantTree(privateKey: string, index: number, variety: Variety) {
-    return await this.client.PlantTree(privateKey, index, variety);
+  public async postArbitrary(contract: string, method: string, body: any) {
+    const contractConfg = this.clients[contract.toLowerCase()];
+
+    if (!contractConfg)
+      throw new NotFoundException(
+        `Unable to find contract: ${contract} in the configuration`,
+      );
+
+    const testDto = await createValidDTO(ChainCallDTO, body);
+    const response = await contractConfg.submitTransaction(method, testDto);
+    if (response.ErrorCode) {
+      throw new HttpException(
+        response.Message || 'Galachain error',
+        response.ErrorCode,
+      );
+    }
+    return response;
   }
+
+  // public async plantTree(privateKey: string, index: number, variety: Variety) {
+  //   return await this.clients['AppleContract'].PlantTree(
+  //     privateKey,
+  //     index,
+  //     variety,
+  //   );
+  // }
 
   async registerUser(privateKey: string, publicKey: string) {
     const dto: RegisterEthUserDto = await createValidDTO<RegisterEthUserDto>(
@@ -96,7 +131,7 @@ export class AppService {
         publicKey,
       },
     );
-    return this.registerClient.submitTransaction(
+    return this.clients['publickeycontract'].submitTransaction(
       'RegisterEthUser',
       dto.signed(privateKey),
     );
@@ -181,5 +216,4 @@ export class AppService {
     console.log('Profile response:', response.data);
     return response.data;
   }
-
 }
