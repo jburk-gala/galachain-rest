@@ -38,13 +38,6 @@ export class AppleTreeDto extends ChainCallDTO {
 export class AppService {
   clients: Record<string, ChainClient> = {};
   constructor() {
-    const apiParams = {
-      orgMsp: 'CuratorOrg',
-      userId: 'admin',
-      userSecret: 'adminpw',
-      apiUrl: 'https://localhost:8561/api',
-      configPath: path.resolve('api-config.json'),
-    };
     const params = {
       orgMsp: 'CuratorOrg',
       userId: 'admin',
@@ -71,10 +64,6 @@ export class AppService {
         contract: 'PublicKeyContract',
       },
     ];
-    // this.client = gcclient
-    //   .forConnectionProfile(params)
-    //   .forContract(contract)
-    //   .extendAPI(this.customAPI);
 
     contractConfigs.forEach((contract) => {
       this.clients[contract.contract.toLowerCase()] = gcclient
