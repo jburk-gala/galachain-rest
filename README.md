@@ -22,3 +22,11 @@ I've also included a postman_collection.json. You can import this directly by dr
 
 
 For startup, it will mint NFTs and provide itself the proper allowances. To specify the NFT data you want minted, please add to NFTs.ts
+
+
+In order to test server-side signing, you can see this demo:
+https://github.com/IndiaJonathan/serverside-signing
+
+
+In order to test client-side signing, you can see this demo:
+https://github.com/IndiaJonathan/ConnectProofOfConcept
