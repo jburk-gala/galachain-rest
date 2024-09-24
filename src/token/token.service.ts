@@ -4,6 +4,7 @@ import {
   createValidDTO,
   FetchBalancesDto,
   FetchTokenClassesDto,
+  GalaChainResponse,
   GrantAllowanceDto,
   MintTokenDto,
   TokenAllowance,
@@ -47,7 +48,7 @@ export class TokenService {
     this.client = gcclient.forConnectionProfile(params).forContract(contract);
   }
 
-  async getBalance(identityKey: string){
+  async getBalance(identityKey: string): Promise<GalaChainResponse<unknown>> {
     const dto = await createValidDTO<FetchBalancesDto>(FetchBalancesDto, {
       owner: identityKey,
     });
@@ -60,7 +61,11 @@ export class TokenService {
     return data;
   }
 
-  async giveToken(tokenData: TOKEN_DATA, quantity: number, user: string) {
+  async giveToken(
+    tokenData: TOKEN_DATA,
+    quantity: number,
+    user: string,
+  ): Promise<GalaChainResponse<unknown>> {
     const nftClassKey: TokenClassKey = toTokenClassKey(tokenData);
     const dto = await createValidDTO<MintTokenDto>(MintTokenDto, {
       owner: user,

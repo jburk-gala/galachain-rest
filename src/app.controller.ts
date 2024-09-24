@@ -1,30 +1,58 @@
-import { Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { AppService } from './app.service';
 import { Variety } from './types';
 import { ethers } from 'ethers';
 import * as fs from 'fs';
 import * as path from 'path';
+import { PublicKeyApi, ServerSigningClient } from '@gala-chain/connect';
+import { GalaChainResponse, UserProfileBody } from '@gala-chain/api';
 
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService) { }
+  constructor(private readonly appService: AppService) {}
 
   @Get()
   getHello(): string {
     return this.appService.getHello();
   }
 
-  @Get('plant-tree/:index/:variety')
-  async plantTree(
-    @Param('index') index: number,
-    @Param('variety') variety: Variety,
-  ) {
+  @Post('server-side/test')
+  async serverSignTest(): Promise<GalaChainResponse<unknown>> {
     const randomWallet = ethers.Wallet.createRandom();
     const registration = await this.appService.registerUser(
       this.getAdminUser(),
       randomWallet.publicKey,
     );
-    return this.appService.plantTree(randomWallet.privateKey, index, variety);
+    const serverSigningClient = new ServerSigningClient(
+      randomWallet.privateKey,
+    );
+
+    const dto = await serverSigningClient.sign('PublicKeyContract', {}); //Empty because we just need the signature
+    return this.appService.postArbitrary(
+      'PublicKeyContract',
+      'GetMyProfile',
+      dto,
+    );
+  }
+
+  @Post('registerself/:publicKey')
+  async register(@Param('publicKey') publicKey: string) {
+    const registration = await this.appService.registerUser(
+      this.getAdminUser(),
+      publicKey,
+    );
+    return registration;
+  }
+
+  @Post('asset/:contract/:method')
+  async testMethod(
+    @Param('contract') contract: string,
+    @Param('method') method: string,
+    @Body() body: any,
+  ): Promise<GalaChainResponse<unknown>> {
+    console.log(`Method: ${method}`);
+    console.log(`Body: ${JSON.stringify(body)}`);
+    return await this.appService.postArbitrary(contract, method, body);
   }
 
   @Post('create-eth')
@@ -33,12 +61,17 @@ export class AppController {
   }
 
   @Post('register/new-random')
-  async registerNewRandom() {
+  async registerNewRandom(): Promise<{
+    registration: GalaChainResponse<unknown>;
+    publicKey: string;
+    privateKey: string;
+  }> {
     const randomWallet = ethers.Wallet.createRandom();
     const registration = await this.appService.registerUser(
       this.getAdminUser(),
       randomWallet.publicKey,
     );
+
     return {
       registration,
       publicKey: randomWallet.publicKey,
@@ -47,24 +80,10 @@ export class AppController {
   }
 
   @Post('register-eth/:public')
-  async registerUser(@Param('public') publicKey: string) {
+  async registerUser(
+    @Param('public') publicKey: string,
+  ): Promise<GalaChainResponse<unknown>> {
     return this.appService.registerUser(this.getAdminUser(), publicKey);
-  }
-
-  @Post('test')
-  async registerUser2(@Param('public') publicKey: string) {
-    const randomWallet = ethers.Wallet.createRandom();
-    const foo = await this.appService.registerUser(
-      this.getAdminUser(),
-      randomWallet.publicKey,
-    );
-    console.log(foo);
-    const test = await this.appService.plantTree(
-      randomWallet.privateKey,
-      5,
-      Variety.GOLDEN_DELICIOUS,
-    );
-    return test;
   }
 
   getAdminUser() {

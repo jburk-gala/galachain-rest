@@ -21,7 +21,9 @@
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.537.0",
-    "@gala-chain/client": "^1.1.6",
+    "@gala-chain/api": "^1.4.3",
+    "@gala-chain/client": "^1.4.3",
+    "@gala-chain/connect": "^1.4.3",
     "@nestjs/common": "^9.0.0",
     "@nestjs/config": "^3.2.0",
     "@nestjs/core": "^9.0.0",
